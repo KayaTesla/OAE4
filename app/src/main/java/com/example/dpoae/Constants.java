@@ -194,6 +194,14 @@ public class Constants {
             f2[2]=3800;
             f2[3]=4800;
         }
+        else {
+            phone="unknownPhone";
+            f2[0]=1900;
+            f2[1]=2900;
+            f2[2]=3800;
+            f2[3]=4800;
+        }
+
 
         freqs=new boolean[f2.length];
         for (int i = 0; i < freqs.length; i++) {

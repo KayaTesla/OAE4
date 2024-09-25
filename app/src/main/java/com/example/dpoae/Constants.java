@@ -304,6 +304,14 @@ public class Constants {
             vols[3]=.6f;
             SEAL_CHECK_THRESH=130;
         }
+        else {
+            vols[0]=.6f;
+            vols[1]=.4f;
+            vols[2]=.6f;
+            vols[3]=.6f;
+            SEAL_CHECK_THRESH=130;
+        }
+
         for(int i = 0; i < f1.length; i++) {
             vol1LookupDefaults.put(f2[i], vols[i]);
         }
@@ -372,6 +380,20 @@ public class Constants {
             vol1[3]=1f;
             vol2[3]=1f;
         }
+        else {
+            vol1[0]=1f;
+            vol2[0]=.15f;
+
+            vol1[1]=1f;
+            vol2[1]=1f;
+
+            vol1[2]=1f;
+            vol2[2]=1f;
+
+            vol1[3]=1f;
+            vol2[3]=1f;
+        }
+
         for (int i = 0; i < f1.length; i++) {
             vol3Lookup.put(f1[i],vol1[i]);
             vol3Lookup.put(f2[i],vol2[i]);

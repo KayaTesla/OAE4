@@ -526,6 +526,10 @@ public class MeasureFragment extends Fragment {
         else if (Constants.phone.equals("kenyaD")) {
             Constants.threshs=new double[]{80,80,80,80};
         }
+        else {
+            Constants.threshs=new double[]{80,80,80,80};
+        }
+
         String outthresh="";
         for(int i = 0; i < Constants.threshs.length; i++) {
             double decrement = 10*Math.log10(Constants.CONSTANT_TONE_LENGTH_IN_SECONDS-1);

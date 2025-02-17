@@ -183,14 +183,23 @@ public class MeasureFragment extends Fragment {
             public void onClick(View v) {
                 Constants.ear="";
                 measure.cancel(true);
-                gsp.stopit();
+                if (gsp==null) {
+                    Log.e("nullref", "gsp");
+                }
+
                 try {
+                    gsp.stopit();
                     gsp.join();
                 } catch (InterruptedException e) {
                     Log.e("ex",e.getMessage());
                 }
-                    rec.stopit();
+
+                if(rec==null) {
+                    Log.e("nullref", "rec");
+                }
+
                 try {
+                    rec.stopit();
                     rec.join();
                 } catch (InterruptedException e) {
                     Log.e("ex",e.getMessage());
@@ -1128,8 +1137,8 @@ public class MeasureFragment extends Fragment {
                 short[] pulse2;
                 Log.e("asdf", "get " + f1);
                 Log.e("asdf", "get " + f2);
-                float vol3a = Constants.vol3Lookup.get(f1);
-                float vol3b = Constants.vol3Lookup.get(f2);
+                float vol3a = Constants.vol3Lookup.get(f1) * Constants.CONSTANT_VOLUME_SETTING / 100.0f;
+                float vol3b = Constants.vol3Lookup.get(f2) * Constants.CONSTANT_VOLUME_SETTING / 100.0f;
 
                 pulse1 = SignalGenerator.sine2speaker(f1, f2,
                         Constants.samplingRate,
@@ -1272,14 +1281,15 @@ public class MeasureFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     measure.cancel(true);
-                    gsp.stopit();
                     try {
+                        gsp.stopit();
                         gsp.join();
                     } catch (InterruptedException e) {
                         Log.e("ex",e.getMessage());
                     }
-                    rec.stopit();
+
                     try {
+                        rec.stopit();
                         rec.join();
                     } catch (InterruptedException e) {
                         Log.e("ex",e.getMessage());
@@ -1314,15 +1324,15 @@ public class MeasureFragment extends Fragment {
             Log.e("asdf","done with checkfit");
         }
 
-        public void sendTone(int freq, int fidx, int tidx, boolean ss) {
+        private void sendTone(int freq, int fidx, int tidx, boolean ss) {
             int f1 = Constants.freqLookup.get(freq);
             int f2 = freq;
 
             short[] pulse;
             Log.e("justin","sendtone get "+f1+","+freq);
             Log.e("justin","send tone get "+f2+","+freq);
-            float vol3a = Constants.vol3Lookup.get(f1);
-            float vol3b = Constants.vol3Lookup.get(f2);
+            float vol3a = Constants.vol3Lookup.get(f1) * Constants.CONSTANT_VOLUME_SETTING / 100.0f;
+            float vol3b = Constants.vol3Lookup.get(f2) * Constants.CONSTANT_VOLUME_SETTING / 100.0f;
 
             pulse = SignalGenerator.sine2speaker(f1, f2,
                     Constants.samplingRate,

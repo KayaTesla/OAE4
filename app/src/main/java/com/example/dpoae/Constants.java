@@ -26,6 +26,7 @@ public class Constants {
 //    static PrepareFragment PrepareFragment;
     static MeasureFragment MeasureFragment;
     static SettingsFragment SettingsFragment;
+    static CheckProbeFragment CheckProbeFragment;
     static Fragment CurrentFragment;
     static boolean testInProgress;
 
@@ -123,6 +124,7 @@ public class Constants {
     static boolean CALIBRATE = true;
     static boolean INTERLEAVED = false;
     static int CONSTANT_TONE_LENGTH_IN_SECONDS = 6;
+    static int CONSTANT_VOLUME_SETTING = 4;
     static double TONE_CALIB_LENGTH_IN_SECONDS = 0.2;
     static double EXAMINE_CALIB_LENGTH_IN_SECONDS = 0.1;
     static double PAD_CALIB_LENGTH_IN_SECONDS = 0.05;
@@ -227,6 +229,7 @@ public class Constants {
 
         MeasureFragment = new MeasureFragment();
         SettingsFragment = new SettingsFragment();
+        CheckProbeFragment = new CheckProbeFragment();
 
         chirp=FileOperations.readrawasset(context,R.raw.chirp);
 
@@ -238,7 +241,8 @@ public class Constants {
         Constants.INTERLEAVED =prefs.getBoolean("adaptive",Constants.INTERLEAVED);
         Constants.SPL_CHECK =prefs.getBoolean("spl",Constants.SPL_CHECK);
         Constants.CONSTANT_TONE_LENGTH_IN_SECONDS=prefs.getInt("constantToneLength",Constants.CONSTANT_TONE_LENGTH_IN_SECONDS);
-//        Constants.SEAL_CHECK_THRESH =prefs.getInt("checkFitThresh",Constants.SEAL_CHECK_THRESH);
+        Constants.CONSTANT_VOLUME_SETTING=prefs.getInt("volumeSettings",Constants.CONSTANT_VOLUME_SETTING);
+//      Constants.SEAL_CHECK_THRESH =prefs.getInt("checkFitThresh",Constants.SEAL_CHECK_THRESH);
         Constants.CHECK_FIT =prefs.getBoolean("checkFit",Constants.CHECK_FIT);
         Constants.NOISE_CHECK =prefs.getBoolean("noiseCheck",Constants.NOISE_CHECK);
         Constants.SOUND_VOLUME_CHECK =prefs.getBoolean("soundVolCheck",Constants.SOUND_VOLUME_CHECK);

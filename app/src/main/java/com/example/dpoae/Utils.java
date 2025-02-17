@@ -73,8 +73,8 @@ public class Utils {
                 v2=defaults[counter+1];
             }
 
-            Constants.vol3Lookup.put(f1,(float)v1);
-            Constants.vol3Lookup.put(f2,(float)v2);
+            Constants.vol3Lookup.put(f1,(float)v1 * Constants.CONSTANT_VOLUME_SETTING / (float)100.0);
+            Constants.vol3Lookup.put(f2,(float)v2 * Constants.CONSTANT_VOLUME_SETTING / (float)100.0);
             idx+=(Constants.TONE_CALIB_LENGTH_IN_SECONDS * Constants.samplingRate)*2;
             counter+=2;
         }

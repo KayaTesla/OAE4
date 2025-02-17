@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.dpoae.MainActivity">
+>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        android:id="@+id/buttonDraw"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <Switch
+        android:id="@+id/customFftSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Custom FFT"
+        app:layout_constraintStart_toEndOf="@+id/buttonDraw"
+        app:layout_constraintTop_toTopOf="@+id/buttonDraw" />
+
+    <Switch
+        android:id="@+id/log10Switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log"
+        app:layout_constraintStart_toEndOf="@+id/customFftSwitch"
+        app:layout_constraintTop_toTopOf="@+id/customFftSwitch" />
+
+    <CheckBox
+        android:id="@+id/zoomCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Zoom"
+        app:layout_constraintStart_toEndOf="@+id/log10Switch"
+        app:layout_constraintTop_toTopOf="@+id/log10Switch" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/bufferInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="Buffer"
+        app:layout_constraintStart_toEndOf="@+id/zoomCheck"
+        app:layout_constraintTop_toTopOf="@+id/zoomCheck" 
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/bufferSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sleepLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Sleep MS"
+        android:tooltipText="Sleep ms"
+        app:layout_constraintStart_toEndOf="@+id/bufferInputLayout"
+        app:layout_constraintTop_toTopOf="@+id/bufferInputLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/sleepTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:text="250"
+            android:selectAllOnFocus="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Uninitialized"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/buttonDraw"
+        android:layout_toLeftOf="@+id/buttonDraw"
+        android:layout_toStartOf="@+id/buttonDraw"
+        app:layout_constraintRight_toRightOf="@+id/buttonDraw"/>
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonDraw"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonDraw"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

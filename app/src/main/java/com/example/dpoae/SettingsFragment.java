@@ -1,5 +1,7 @@
 package com.example.dpoae;
 
+import static com.example.dpoae.Constants.volumeSetting;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -66,6 +68,7 @@ public class SettingsFragment extends Fragment {
 
     public void initView(View view) {
         final TextInputEditText constantToneLength = view.findViewById(R.id.constantToneLength);
+        final TextInputEditText constantVolumeSetting = view.findViewById(R.id.volumeSetting);
         final TextInputEditText checkFitThresh = view.findViewById(R.id.checkFitThresh);
         final Switch checkFitSwitch = view.findViewById(R.id.checkFitSwitch);
         final Switch noiseCheckSwitch = view.findViewById(R.id.noiseCheckSwitch);
@@ -97,6 +100,7 @@ public class SettingsFragment extends Fragment {
         c3.setChecked(Constants.freqs[2]);
         c4.setChecked(Constants.freqs[3]);
         constantToneLength.setText(Constants.CONSTANT_TONE_LENGTH_IN_SECONDS+"");
+        constantVolumeSetting.setText(Constants.CONSTANT_VOLUME_SETTING+"");
         checkFitThresh.setText(Constants.SEAL_CHECK_THRESH+"");
         checkFitSwitch.setChecked(Constants.CHECK_FIT);
         noiseCheckSwitch.setChecked(Constants.NOISE_CHECK);
@@ -201,6 +205,27 @@ public class SettingsFragment extends Fragment {
                     editor.putInt("checkFitThresh", Integer.parseInt(ss));
                     editor.commit();
                     Constants.SEAL_CHECK_THRESH = Integer.parseInt(ss);
+                }
+            }
+        });
+
+        constantVolumeSetting.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                String ss = constantVolumeSetting.getText().toString();
+                if (ss.length() > 0) {
+                    editor.putInt("volumeSetting", Integer.parseInt(ss));
+                    editor.commit();
+                    Constants.CONSTANT_VOLUME_SETTING = Integer.parseInt(ss);
                 }
             }
         });

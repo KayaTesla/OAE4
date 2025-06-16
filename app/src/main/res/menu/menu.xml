@@ -20,4 +20,10 @@
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="Settings"
         app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/action_checkProbe"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="Probe"
+        app:showAsAction="always|withText" />
 </menu>

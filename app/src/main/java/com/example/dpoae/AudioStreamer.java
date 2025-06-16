@@ -1,7 +1,6 @@
 package com.example.dpoae;
 
 import android.content.Context;
-import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -24,6 +23,7 @@ public class AudioStreamer extends Thread {
 
     public AudioStreamer(Context mycontext, short[] samples, int samplen, int samplingFreq, int speakerType, double vol, boolean loop) {
         this.mycontext = mycontext;
+
         man = (AudioManager)mycontext.getSystemService(Context.AUDIO_SERVICE);
         for (Integer i : streams) {
             man.setStreamMute(i,true);

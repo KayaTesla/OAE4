@@ -26,6 +26,7 @@ public class Constants {
 //    static PrepareFragment PrepareFragment;
     static MeasureFragment MeasureFragment;
     static SettingsFragment SettingsFragment;
+    static CheckProbeFragment CheckProbeFragment;
     static Fragment CurrentFragment;
     static boolean testInProgress;
 
@@ -112,7 +113,12 @@ public class Constants {
     static HashMap<Integer, Float> vol1LookupDefaults=new HashMap<Integer,Float>();
     static HashMap<Integer, Float> vol1Lookup=new HashMap<Integer,Float>();
     static HashMap<Integer, Float> vol2Lookup=new HashMap<Integer,Float>();
+
+    // Key: Frequency
+    // Value: volume for that frequency
+    // Typically, there will be 8 frequencies ad their corresponding volume here.
     static HashMap<Integer, Float> vol3Lookup=new HashMap<Integer,Float>();
+
     static LinkedList<Integer> octaves=new LinkedList<>();
     static LinkedList<Integer> volCalibMags=new LinkedList<>();
     static HashMap<Integer,Integer> volOffset = new HashMap<Integer,Integer>();
@@ -123,6 +129,7 @@ public class Constants {
     static boolean CALIBRATE = true;
     static boolean INTERLEAVED = false;
     static int CONSTANT_TONE_LENGTH_IN_SECONDS = 6;
+    static int CONSTANT_VOLUME = 100;
     static double TONE_CALIB_LENGTH_IN_SECONDS = 0.2;
     static double EXAMINE_CALIB_LENGTH_IN_SECONDS = 0.1;
     static double PAD_CALIB_LENGTH_IN_SECONDS = 0.05;
@@ -132,9 +139,9 @@ public class Constants {
     static int IMD_THRESH=200;
     static long test_timestamp=0;
     static String filename;
-    static int volumeSetting = 2;
     static boolean SPL_CHECK = true;
     static int AMP_THRESH = 500;
+    static boolean ONLY_LEFT = false;
     static boolean CHECK_FIT = true;
     static boolean NOISE_CHECK = true;
     static boolean SOUND_VOLUME_CHECK = true;
@@ -146,6 +153,8 @@ public class Constants {
     static double totalSeconds=0;
     static double secondCounter=0;
     static String phone="kenyaC";
+
+    // This is only used in calibration, which is not used.
     static double volDefault;
     static double[] threshs=new double[]{68,73,55,55};
     //lab is for paper experiments
@@ -159,14 +168,15 @@ public class Constants {
     static int[] oaes=new int[4];
     static int[] oaes2=new int[4];
 
+    static String android_id;
     public static void init(Context context) {
 
-        String android_id = Secure.getString(context.getContentResolver(),
+        Constants.android_id = Secure.getString(context.getContentResolver(),
                 Secure.ANDROID_ID);
 
         Log.e("androidid",android_id);
 
-        if (android_id.equals("5c036c180f521a09")||android_id.equals("a2ee357cb0a51ef7")||android_id.equals("215cc03f47f1cbad")||android_id.equals("86c59a9d0f5cdec9")) {
+        if (android_id.equals("4440db34e0494a9f")||android_id.equals("5c036c180f521a09")||android_id.equals("a2ee357cb0a51ef7")||android_id.equals("215cc03f47f1cbad")||android_id.equals("86c59a9d0f5cdec9")) {
             phone="kenyaA";
             f2[0]=1900;
             f2[1]=2900;
@@ -194,12 +204,36 @@ public class Constants {
             f2[2]=3800;
             f2[3]=4800;
         }
-        else {
-            phone="unknownPhone";
+        else if (android_id.equals("2fcd4276f800f7ca")) {
+            // Original phone for benchmarking
+            phone="Seattle0";
             f2[0]=1900;
             f2[1]=2900;
             f2[2]=3800;
             f2[3]=4800;
+        }
+        else if (android_id.equals("8a3811dd68d8ca9f")) {
+            // Phone build 3/24
+            phone="Redmond1";
+            f2[0]=1900;
+            f2[1]=2900;
+            f2[2]=3800;
+            f2[3]=4800;
+        }
+        else if (android_id.equals("938fc3fd45d7215c")) {
+            // Phone build 3/25
+            phone="Redmond2";
+            f2[0]=1900;
+            f2[1]=2900;
+            f2[2]=3800;
+            f2[3]=4800;
+        }
+        else {
+            phone="unknownPhone";
+            f2[0]=1900;
+            f2[1]=2900;
+            f2[2]=3900;
+            f2[3]=4900;
         }
 
         freqs=new boolean[f2.length];
@@ -227,6 +261,7 @@ public class Constants {
 
         MeasureFragment = new MeasureFragment();
         SettingsFragment = new SettingsFragment();
+        CheckProbeFragment = new CheckProbeFragment();
 
         chirp=FileOperations.readrawasset(context,R.raw.chirp);
 
@@ -238,8 +273,10 @@ public class Constants {
         Constants.INTERLEAVED =prefs.getBoolean("adaptive",Constants.INTERLEAVED);
         Constants.SPL_CHECK =prefs.getBoolean("spl",Constants.SPL_CHECK);
         Constants.CONSTANT_TONE_LENGTH_IN_SECONDS=prefs.getInt("constantToneLength",Constants.CONSTANT_TONE_LENGTH_IN_SECONDS);
-//        Constants.SEAL_CHECK_THRESH =prefs.getInt("checkFitThresh",Constants.SEAL_CHECK_THRESH);
+        Constants.CONSTANT_VOLUME=prefs.getInt("volumeSetting",Constants.CONSTANT_VOLUME);
+//      Constants.SEAL_CHECK_THRESH =prefs.getInt("checkFitThresh",Constants.SEAL_CHECK_THRESH);
         Constants.CHECK_FIT =prefs.getBoolean("checkFit",Constants.CHECK_FIT);
+        Constants.ONLY_LEFT =prefs.getBoolean("onlyLeft",Constants.ONLY_LEFT);
         Constants.NOISE_CHECK =prefs.getBoolean("noiseCheck",Constants.NOISE_CHECK);
         Constants.SOUND_VOLUME_CHECK =prefs.getBoolean("soundVolCheck",Constants.SOUND_VOLUME_CHECK);
         Constants.VOL_CALIB =prefs.getBoolean("volCalib",Constants.VOL_CALIB);
@@ -270,11 +307,11 @@ public class Constants {
             }
 
             /////////////////////////////////////////??
-            populateVolume();
+            populateVolume(context);
         }
     }
 
-    public static void populateVolume() {
+    public static void populateVolume(Context context) {
         float[]vols=new float[f1.length];
         if (phone.equals("kenyaA")) {
             vols[0]=.5f;
@@ -304,10 +341,24 @@ public class Constants {
             vols[3]=.6f;
             SEAL_CHECK_THRESH=130;
         }
+        else if (phone.equals("Redmond1")) {
+            vols[0]=.2f;
+            vols[1]=.2f;
+            vols[2]=.2f;
+            vols[3]=.2f;
+            SEAL_CHECK_THRESH=130;
+        }
+        else if (phone.equals("Redmond2")) {
+            vols[0]=.3f;
+            vols[1]=.3f;
+            vols[2]=.3f;
+            vols[3]=.3f;
+            SEAL_CHECK_THRESH=130;
+        }
         else {
-            vols[0]=.6f;
-            vols[1]=.4f;
-            vols[2]=.6f;
+            vols[0]=.5f;
+            vols[1]=.5f;
+            vols[2]=.5f;
             vols[3]=.6f;
             SEAL_CHECK_THRESH=130;
         }
@@ -382,10 +433,10 @@ public class Constants {
         }
         else {
             vol1[0]=1f;
-            vol2[0]=.15f;
+            vol2[0]=.2f;
 
             vol1[1]=1f;
-            vol2[1]=1f;
+            vol2[1]=.9f;
 
             vol1[2]=1f;
             vol2[2]=1f;
@@ -394,9 +445,14 @@ public class Constants {
             vol2[3]=1f;
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         for (int i = 0; i < f1.length; i++) {
-            vol3Lookup.put(f1[i],vol1[i]);
-            vol3Lookup.put(f2[i],vol2[i]);
+            // Read adjusted values from SharedPreferences if they exist.
+            // Use defaults when they do do not exist.
+            float f1v = prefs.getFloat("volumeF1te_"+f1[i], vol1[i]);
+            float f2v = prefs.getFloat("volumeF2te_"+f2[i], vol2[i]);
+            vol3Lookup.put(f1[i],f1v);
+            vol3Lookup.put(f2[i],f2v);
         }
     }
 }

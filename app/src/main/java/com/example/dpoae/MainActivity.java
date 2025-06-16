@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_settings:
                             selectedFragment = Constants.SettingsFragment;
                             break;
+                        case R.id.action_checkProbe:
+                            selectedFragment = Constants.CheckProbeFragment;
+                            break;
                         default:
                             selectedFragment = Constants.CurrentFragment;
                             break;

@@ -183,14 +183,23 @@ public class MeasureFragment extends Fragment {
             public void onClick(View v) {
                 Constants.ear="";
                 measure.cancel(true);
-                gsp.stopit();
+                if (gsp==null) {
+                    Log.e("nullref", "gsp");
+                }
+
                 try {
+                    gsp.stopit();
                     gsp.join();
                 } catch (InterruptedException e) {
                     Log.e("ex",e.getMessage());
                 }
-                    rec.stopit();
+
+                if(rec==null) {
+                    Log.e("nullref", "rec");
+                }
+
                 try {
+                    rec.stopit();
                     rec.join();
                 } catch (InterruptedException e) {
                     Log.e("ex",e.getMessage());
@@ -809,17 +818,19 @@ public class MeasureFragment extends Fragment {
                 Log.e("mywarning",Constants.snrs_f1[i]+","+Constants.snrs_f2[i]);
                 if (Constants.snrs_f1[i] < Constants.TONE_F1_MIN_THRESH ||
                     Constants.snrs_f2[i] < Constants.TONE_F2_MIN_THRESH) {
+                    String snrValues=
+                            String.format("%f:%f, ",Constants.snrs_f1[i],Constants.snrs_f2[i]);
                     if (i==0) {
-                        freqs += "2kHz, ";
+                        freqs += "2kHz:"+snrValues;
                     }
                     else if (i==1) {
-                        freqs += "3kHz, ";
+                        freqs += "3kHz:"+snrValues;
                     }
                     else if (i==2) {
-                        freqs += "4kHz, ";
+                        freqs += "4kHz:"+snrValues;
                     }
                     else if (i==3) {
-                        freqs += "5kHz, ";
+                        freqs += "5kHz:"+snrValues;
                     }
                 }
             }
@@ -971,7 +982,7 @@ public class MeasureFragment extends Fragment {
                 vol_calib();
             }
             else {
-                populateVolume();
+                populateVolume(getContext());
             }
 
             ProgressBar pb2 = null;
@@ -1149,6 +1160,7 @@ public class MeasureFragment extends Fragment {
                 }
             }
 
+            // $TODO: is volDefault populated?
             AudioStreamer sp = new AudioStreamer(context, output_signal,
                     output_signal.length, Constants.samplingRate,
                     AudioManager.STREAM_SYSTEM,Constants.volDefault,false);
@@ -1232,7 +1244,9 @@ public class MeasureFragment extends Fragment {
                             Constants.samplingRate, AudioManager.STREAM_SYSTEM, .4, true);
                 }
                 else {
-                    sp=null;
+                    // Use some defaults for unknown phones.
+                    sp = new AudioStreamer(context, pulse, (Constants.samplingRate * Constants.CONSTANT_TONE_LENGTH_IN_SECONDS) * 2,
+                            Constants.samplingRate, AudioManager.STREAM_SYSTEM, .4, true);
                 }
             }
             gsp=sp;
@@ -1272,14 +1286,15 @@ public class MeasureFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     measure.cancel(true);
-                    gsp.stopit();
                     try {
+                        gsp.stopit();
                         gsp.join();
                     } catch (InterruptedException e) {
                         Log.e("ex",e.getMessage());
                     }
-                    rec.stopit();
+
                     try {
+                        rec.stopit();
                         rec.join();
                     } catch (InterruptedException e) {
                         Log.e("ex",e.getMessage());
@@ -1314,7 +1329,7 @@ public class MeasureFragment extends Fragment {
             Log.e("asdf","done with checkfit");
         }
 
-        public void sendTone(int freq, int fidx, int tidx, boolean ss) {
+        private void sendTone(int freq, int fidx, int tidx, boolean ss) {
             int f1 = Constants.freqLookup.get(freq);
             int f2 = freq;
 
@@ -1332,7 +1347,7 @@ public class MeasureFragment extends Fragment {
 
             Log.e("out","speaker "+f1+","+f2);
 
-            float vol1 = Constants.vol1Lookup.get(f2);
+            float vol1 = Constants.vol1Lookup.get(f2)  * Constants.CONSTANT_VOLUME / 100.0f;
 
             AudioStreamer sp = new AudioStreamer(context, pulse, Constants.samplingRate*Constants.CONSTANT_TONE_LENGTH_IN_SECONDS*2,
                     Constants.samplingRate, AudioManager.STREAM_SYSTEM,vol1,false);
@@ -1358,6 +1373,7 @@ public class MeasureFragment extends Fragment {
             OfflineRecorder orec;
             orec = new OfflineRecorder(micType, fidx, tidx, freq, barChart, lineChart, context,
                     (int) (Constants.CONSTANT_TONE_LENGTH_IN_SECONDS * Constants.samplingRate), false, false);
+
             orec.ss=ss;
             rec = orec;
 

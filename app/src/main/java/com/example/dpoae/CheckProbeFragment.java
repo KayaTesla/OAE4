@@ -252,6 +252,7 @@ public class CheckProbeFragment extends Fragment {
 
         this.StopSpeakersAndMic();
         vol3a = Constants.vol3Lookup.get(f1);
+        vol3b = Constants.vol3Lookup.get(f2);
 
         short[] pulse = SignalGenerator.sine2speaker(
                 f1,

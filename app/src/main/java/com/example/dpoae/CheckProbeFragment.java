@@ -262,7 +262,7 @@ public class CheckProbeFragment extends Fragment {
                 vol3a,
                 vol3b);
 
-        vol1 = Constants.vol1Lookup.get(f2)  * Constants.CONSTANT_VOLUME / 100.0f;
+        vol1 = Constants.vol1Lookup.get(f2);
 
         FragmentActivity activity = getActivity();
         if (activity == null) return;

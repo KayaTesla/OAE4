@@ -129,7 +129,6 @@ public class Constants {
     static boolean CALIBRATE = true;
     static boolean INTERLEAVED = false;
     static int CONSTANT_TONE_LENGTH_IN_SECONDS = 6;
-    static int CONSTANT_VOLUME = 100;
     static double TONE_CALIB_LENGTH_IN_SECONDS = 0.2;
     static double EXAMINE_CALIB_LENGTH_IN_SECONDS = 0.1;
     static double PAD_CALIB_LENGTH_IN_SECONDS = 0.05;
@@ -273,7 +272,6 @@ public class Constants {
         Constants.INTERLEAVED =prefs.getBoolean("adaptive",Constants.INTERLEAVED);
         Constants.SPL_CHECK =prefs.getBoolean("spl",Constants.SPL_CHECK);
         Constants.CONSTANT_TONE_LENGTH_IN_SECONDS=prefs.getInt("constantToneLength",Constants.CONSTANT_TONE_LENGTH_IN_SECONDS);
-        Constants.CONSTANT_VOLUME=prefs.getInt("volumeSetting",Constants.CONSTANT_VOLUME);
 //      Constants.SEAL_CHECK_THRESH =prefs.getInt("checkFitThresh",Constants.SEAL_CHECK_THRESH);
         Constants.CHECK_FIT =prefs.getBoolean("checkFit",Constants.CHECK_FIT);
         Constants.ONLY_LEFT =prefs.getBoolean("onlyLeft",Constants.ONLY_LEFT);

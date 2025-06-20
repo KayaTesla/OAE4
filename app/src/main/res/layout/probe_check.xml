@@ -25,6 +25,14 @@ android:scrollbars="none" >
         android:layout_height="0dp"
         android:layout_weight="1" />        
     <EditText
+        android:id="@+id/volumeValue"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:imeOptions="actionDone"
+        android:inputType="numberDecimal"
+    />
+
+    <EditText
         android:id="@+id/volumeF1v"
         android:layout_width="80dp"
         android:layout_height="60dp"

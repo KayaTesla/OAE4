@@ -361,19 +361,6 @@ public class Constants {
             SEAL_CHECK_THRESH=130;
         }
 
-        for(int i = 0; i < f1.length; i++) {
-            vol1LookupDefaults.put(f2[i], vols[i]);
-        }
-        /////////////////////////////////////////
-        for (Integer i : octaves) {
-            float val = vol1LookupDefaults.get(i);
-            vol1LookupDefaults.put(freqLookup.get(i), val);
-        }
-
-        for(Integer i : vol1LookupDefaults.keySet()) {
-            float val = vol1LookupDefaults.get(i);
-            vol1Lookup.put(i,val);
-        }
         ///////////////////////////////////
         float[]vol1=new float[f1.length];
         float[]vol2=new float[f1.length];
@@ -447,10 +434,26 @@ public class Constants {
         for (int i = 0; i < f1.length; i++) {
             // Read adjusted values from SharedPreferences if they exist.
             // Use defaults when they do do not exist.
+            float volV = prefs.getFloat("volumeValue_"+f2[i], vols[i]);
+            vol1LookupDefaults.put(f2[i], volV);
+
             float f1v = prefs.getFloat("volumeF1te_"+f1[i], vol1[i]);
             float f2v = prefs.getFloat("volumeF2te_"+f2[i], vol2[i]);
             vol3Lookup.put(f1[i],f1v);
             vol3Lookup.put(f2[i],f2v);
+        }
+
+        /////////////////////////////////////////
+        // Just vol1Lookup.put(f2[i], ...) should be enough.
+        // $TODO: remove below and all vol1LookupDefaults from code.
+        for (Integer i : octaves) {
+            float val = vol1LookupDefaults.get(i);
+            vol1LookupDefaults.put(freqLookup.get(i), val);
+        }
+
+        for(Integer i : vol1LookupDefaults.keySet()) {
+            float val = vol1LookupDefaults.get(i);
+            vol1Lookup.put(i,val);
         }
     }
 }

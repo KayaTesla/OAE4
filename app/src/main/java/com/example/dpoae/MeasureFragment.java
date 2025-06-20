@@ -1347,7 +1347,7 @@ public class MeasureFragment extends Fragment {
 
             Log.e("out","speaker "+f1+","+f2);
 
-            float vol1 = Constants.vol1Lookup.get(f2)  * Constants.CONSTANT_VOLUME / 100.0f;
+            float vol1 = Constants.vol1Lookup.get(f2);
 
             AudioStreamer sp = new AudioStreamer(context, pulse, Constants.samplingRate*Constants.CONSTANT_TONE_LENGTH_IN_SECONDS*2,
                     Constants.samplingRate, AudioManager.STREAM_SYSTEM,vol1,false);

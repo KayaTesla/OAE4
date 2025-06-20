@@ -129,7 +129,6 @@ public class Constants {
     static boolean CALIBRATE = true;
     static boolean INTERLEAVED = false;
     static int CONSTANT_TONE_LENGTH_IN_SECONDS = 6;
-    static int CONSTANT_VOLUME = 100;
     static double TONE_CALIB_LENGTH_IN_SECONDS = 0.2;
     static double EXAMINE_CALIB_LENGTH_IN_SECONDS = 0.1;
     static double PAD_CALIB_LENGTH_IN_SECONDS = 0.05;
@@ -273,7 +272,6 @@ public class Constants {
         Constants.INTERLEAVED =prefs.getBoolean("adaptive",Constants.INTERLEAVED);
         Constants.SPL_CHECK =prefs.getBoolean("spl",Constants.SPL_CHECK);
         Constants.CONSTANT_TONE_LENGTH_IN_SECONDS=prefs.getInt("constantToneLength",Constants.CONSTANT_TONE_LENGTH_IN_SECONDS);
-        Constants.CONSTANT_VOLUME=prefs.getInt("volumeSetting",Constants.CONSTANT_VOLUME);
 //      Constants.SEAL_CHECK_THRESH =prefs.getInt("checkFitThresh",Constants.SEAL_CHECK_THRESH);
         Constants.CHECK_FIT =prefs.getBoolean("checkFit",Constants.CHECK_FIT);
         Constants.ONLY_LEFT =prefs.getBoolean("onlyLeft",Constants.ONLY_LEFT);
@@ -363,19 +361,6 @@ public class Constants {
             SEAL_CHECK_THRESH=130;
         }
 
-        for(int i = 0; i < f1.length; i++) {
-            vol1LookupDefaults.put(f2[i], vols[i]);
-        }
-        /////////////////////////////////////////
-        for (Integer i : octaves) {
-            float val = vol1LookupDefaults.get(i);
-            vol1LookupDefaults.put(freqLookup.get(i), val);
-        }
-
-        for(Integer i : vol1LookupDefaults.keySet()) {
-            float val = vol1LookupDefaults.get(i);
-            vol1Lookup.put(i,val);
-        }
         ///////////////////////////////////
         float[]vol1=new float[f1.length];
         float[]vol2=new float[f1.length];
@@ -449,10 +434,26 @@ public class Constants {
         for (int i = 0; i < f1.length; i++) {
             // Read adjusted values from SharedPreferences if they exist.
             // Use defaults when they do do not exist.
+            float volV = prefs.getFloat("volumeValue_"+f2[i], vols[i]);
+            vol1LookupDefaults.put(f2[i], volV);
+
             float f1v = prefs.getFloat("volumeF1te_"+f1[i], vol1[i]);
             float f2v = prefs.getFloat("volumeF2te_"+f2[i], vol2[i]);
             vol3Lookup.put(f1[i],f1v);
             vol3Lookup.put(f2[i],f2v);
+        }
+
+        /////////////////////////////////////////
+        // Just vol1Lookup.put(f2[i], ...) should be enough.
+        // $TODO: remove below and all vol1LookupDefaults from code.
+        for (Integer i : octaves) {
+            float val = vol1LookupDefaults.get(i);
+            vol1LookupDefaults.put(freqLookup.get(i), val);
+        }
+
+        for(Integer i : vol1LookupDefaults.keySet()) {
+            float val = vol1LookupDefaults.get(i);
+            vol1Lookup.put(i,val);
         }
     }
 }

@@ -91,6 +91,7 @@ public class CheckProbeFragment extends Fragment {
         holder.getSurface();
         paint = new Paint();
         initView(view);
+        final EditText volumeValueTxt = view.findViewById(R.id.volumeValue);
         final EditText volumeF2te = view.findViewById(R.id.volumeF2v);
         final EditText volumeF1te = view.findViewById(R.id.volumeF1v);
         final Button buttonDraw = view.findViewById(R.id.buttonDraw);
@@ -106,6 +107,29 @@ public class CheckProbeFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 UpdateFreqIndex();
+
+                // Refresh the running params
+                if(isDrawing) RunNow();
+            }
+        });
+
+        volumeValueTxt.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) return;
+
+            // Text lost focus. Presumably a new value is entered.
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+            String ss = volumeValueTxt.getText().toString();
+            if (ss.length() > 0) {
+                Float vv = Float.parseFloat(ss);
+                int f2 = Constants.octaves.get(freqIndex);
+
+                editor.putFloat("volumeValue_" + f2,vv);
+                editor.commit();
+
+                // Update the in memory volume that is shared.
+                // Note that this value is not commited yet. It will change when app restarts.
+                // This can be saved using SharedPreferences. We need to generate the key with frequency
+                Constants.vol1Lookup.put(f2, vv);
 
                 // Refresh the running params
                 if(isDrawing) RunNow();
@@ -237,6 +261,9 @@ public class CheckProbeFragment extends Fragment {
         int f1 = Constants.freqLookup.get(freq);
         int f2 = freq;
 
+        final EditText volumeValueTxt = view.findViewById(R.id.volumeValue);
+        volumeValueTxt.setText(Constants.vol1Lookup.get(f2) + "");
+
         final EditText volumeF2te = view.findViewById(R.id.volumeF2v);
         volumeF2te.setText(Constants.vol3Lookup.get(f2) + "");
 
@@ -252,6 +279,7 @@ public class CheckProbeFragment extends Fragment {
 
         this.StopSpeakersAndMic();
         vol3a = Constants.vol3Lookup.get(f1);
+        vol3b = Constants.vol3Lookup.get(f2);
 
         short[] pulse = SignalGenerator.sine2speaker(
                 f1,
@@ -261,7 +289,7 @@ public class CheckProbeFragment extends Fragment {
                 vol3a,
                 vol3b);
 
-        vol1 = Constants.vol1Lookup.get(f2)  * Constants.CONSTANT_VOLUME / 100.0f;
+        vol1 = Constants.vol1Lookup.get(f2);
 
         FragmentActivity activity = getActivity();
         if (activity == null) return;

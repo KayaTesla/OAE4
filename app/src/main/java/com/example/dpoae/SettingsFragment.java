@@ -66,7 +66,6 @@ public class SettingsFragment extends Fragment {
 
     public void initView(View view) {
         final TextInputEditText constantToneLength = view.findViewById(R.id.constantToneLength);
-        final TextInputEditText constantVolume = view.findViewById(R.id.volumeSetting);
         final TextInputEditText checkFitThresh = view.findViewById(R.id.checkFitThresh);
         final Switch onlyLeftSwitch = view.findViewById(R.id.onlyLeftSwitch);
         final Switch checkFitSwitch = view.findViewById(R.id.checkFitSwitch);
@@ -99,7 +98,6 @@ public class SettingsFragment extends Fragment {
         c3.setChecked(Constants.freqs[2]);
         c4.setChecked(Constants.freqs[3]);
         constantToneLength.setText(Constants.CONSTANT_TONE_LENGTH_IN_SECONDS+"");
-        constantVolume.setText(Constants.CONSTANT_VOLUME+"");
         onlyLeftSwitch.setChecked(Constants.ONLY_LEFT);
         checkFitThresh.setText(Constants.SEAL_CHECK_THRESH+"");
         checkFitSwitch.setChecked(Constants.CHECK_FIT);
@@ -205,27 +203,6 @@ public class SettingsFragment extends Fragment {
                     editor.putInt("checkFitThresh", Integer.parseInt(ss));
                     editor.commit();
                     Constants.SEAL_CHECK_THRESH = Integer.parseInt(ss);
-                }
-            }
-        });
-
-        constantVolume.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-                String ss = constantVolume.getText().toString();
-                if (ss.length() > 0) {
-                    editor.putInt("volumeSetting", Integer.parseInt(ss));
-                    editor.commit();
-                    Constants.CONSTANT_VOLUME = Integer.parseInt(ss);
                 }
             }
         });

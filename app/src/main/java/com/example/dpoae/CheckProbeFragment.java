@@ -128,16 +128,25 @@ public class CheckProbeFragment extends Fragment {
                 int oae = (int) Math.round(2*f1-vv);
                 int oae2 = 2*vv-f1;
 
+                // Get old frequencies
+                int prevF2 = Constants.octaves.get(freqIndex);
+                int prevF1 = Constants.f1[freqIndex];
+
                 // let's set f2 to the entered value
                 Constants.octaves.set(freqIndex, vv);
                 Constants.f2[freqIndex]=vv;
 
-                // Update related constants
+                // Update related frequencies
                 Constants.freqLookup.put(vv,f1);
                 Constants.oaeLookup.put(vv,oae);
                 Constants.oaeLookup2.put(vv,oae2);
                 Constants.f1[freqIndex]=f1;
-                Constants.vol1Lookup
+
+                // Update related volume.
+                Constants.vol1Lookup.put(vv, Constants.vol1Lookup.get(prevF2));
+                Constants.vol1Lookup.put(f1, Constants.vol1Lookup.get(prevF1));
+                Constants.vol3Lookup.put(vv, Constants.vol3Lookup.get(prevF2));
+                Constants.vol3Lookup.put(f1, Constants.vol3Lookup.get(prevF1));
 
                 // let's persist the new f2 for the frequency index
                 editor.putInt("f2Value_" + freqIndex,vv);

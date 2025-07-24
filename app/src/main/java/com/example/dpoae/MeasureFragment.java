@@ -819,7 +819,7 @@ public class MeasureFragment extends Fragment {
                 if (Constants.snrs_f1[i] < Constants.TONE_F1_MIN_THRESH ||
                     Constants.snrs_f2[i] < Constants.TONE_F2_MIN_THRESH) {
                     String snrValues=
-                            String.format("%f:%f, ",Constants.snrs_f1[i],Constants.snrs_f2[i]);
+                            String.format("%.1f:%.1f, ",Constants.snrs_f1[i],Constants.snrs_f2[i]);
                     if (i==0) {
                         freqs += "2kHz:"+snrValues;
                     }

@@ -91,6 +91,7 @@ public class CheckProbeFragment extends Fragment {
         holder.getSurface();
         paint = new Paint();
         initView(view);
+        final EditText f2ValueTxt = view.findViewById(R.id.f2Value);
         final EditText volumeValueTxt = view.findViewById(R.id.volumeValue);
         final EditText volumeF2te = view.findViewById(R.id.volumeF2v);
         final EditText volumeF1te = view.findViewById(R.id.volumeF1v);
@@ -113,6 +114,55 @@ public class CheckProbeFragment extends Fragment {
             }
         });
 
+        f2ValueTxt.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) return;
+
+            // Text lost focus. Presumably a new value is entered.
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+            String ss = f2ValueTxt.getText().toString();
+            if (ss.length() > 0) {
+                int vv = Integer.parseInt(ss);
+
+                // let's update f1 from f2
+                int f1 = (int) (vv/1.22);
+                int oae = (int) Math.round(2*f1-vv);
+                int oae2 = 2*vv-f1;
+
+                // let's set f2 to the entered value
+                Constants.octaves.set(freqIndex, vv);
+                Constants.f2[freqIndex]=vv;
+
+                // Update related constants
+                Constants.freqLookup.put(vv,f1);
+                Constants.oaeLookup.put(vv,oae);
+                Constants.oaeLookup2.put(vv,oae2);
+                Constants.f1[freqIndex]=f1;
+                Constants.vol1Lookup
+
+                // let's persist the new f2 for the frequency index
+                editor.putInt("f2Value_" + freqIndex,vv);
+                editor.commit();
+
+                /*
+                int[] tempF2s = new int[Constants.octaves.size()];
+                int j = 0;
+                for (int i : Constants.octaves) {
+                    tempF2s[j] = i;
+                    j++;
+                }
+
+                tempF2s[freqIndex] = vv;
+                Constants.octaves.clear();
+                for (int i : tempF2s) {
+                    Constants.octaves.add(i);
+                }
+                */
+
+                // Refresh the running params
+                if(isDrawing) RunNow();
+            }
+        });
+
         volumeValueTxt.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) return;
 
@@ -123,7 +173,7 @@ public class CheckProbeFragment extends Fragment {
                 Float vv = Float.parseFloat(ss);
                 int f2 = Constants.octaves.get(freqIndex);
 
-                editor.putFloat("volumeValue_" + f2,vv);
+                editor.putFloat("volumeValue_" + freqIndex,vv);
                 editor.commit();
 
                 // Update the in memory volume that is shared.
@@ -146,7 +196,7 @@ public class CheckProbeFragment extends Fragment {
                 Float volumeValue = Float.parseFloat(ss);
                 int f2 = Constants.octaves.get(freqIndex);
 
-                editor.putFloat("volumeF2te_" + f2, volumeValue);
+                editor.putFloat("volumeF2te_" + freqIndex, volumeValue);
                 editor.commit();
 
                 // Update the in memory volume that is shared.
@@ -170,7 +220,7 @@ public class CheckProbeFragment extends Fragment {
                 int f2 = Constants.octaves.get(freqIndex);
                 int f1 = Constants.freqLookup.get(f2);
 
-                editor.putFloat("volumeF1te_" + f1, volumeValue);
+                editor.putFloat("volumeF1te_" + freqIndex, volumeValue);
                 editor.commit();
 
                 // Update the in memory volume that is shared.
@@ -260,6 +310,9 @@ public class CheckProbeFragment extends Fragment {
         int freq = Constants.octaves.get(freqIndex);
         int f1 = Constants.freqLookup.get(freq);
         int f2 = freq;
+
+        final EditText f2ValueTxt = view.findViewById(R.id.f2Value);
+        f2ValueTxt.setText(f2 + "");
 
         final EditText volumeValueTxt = view.findViewById(R.id.volumeValue);
         volumeValueTxt.setText(Constants.vol1Lookup.get(f2) + "");

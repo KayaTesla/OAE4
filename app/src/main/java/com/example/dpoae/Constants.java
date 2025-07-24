@@ -236,8 +236,10 @@ public class Constants {
         }
 
         freqs=new boolean[f2.length];
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         for (int i = 0; i < freqs.length; i++) {
             freqs[i]=true;
+            f2[i] = prefs.getInt("f2Value_" + i, f2[i]);
         }
 
 //        f2[0]=2016;
@@ -264,7 +266,6 @@ public class Constants {
 
         chirp=FileOperations.readrawasset(context,R.raw.chirp);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Constants.MAX_TRIES=prefs.getInt("maxtries",Constants.MAX_TRIES);
         Constants.OCTAVES=prefs.getBoolean("octaves",Constants.OCTAVES);
         Constants.EARLY_STOPPING=prefs.getBoolean("earlystop",Constants.EARLY_STOPPING);
@@ -434,11 +435,11 @@ public class Constants {
         for (int i = 0; i < f1.length; i++) {
             // Read adjusted values from SharedPreferences if they exist.
             // Use defaults when they do do not exist.
-            float volV = prefs.getFloat("volumeValue_"+f2[i], vols[i]);
+            float volV = prefs.getFloat("volumeValue_"+i, vols[i]);
             vol1LookupDefaults.put(f2[i], volV);
 
-            float f1v = prefs.getFloat("volumeF1te_"+f1[i], vol1[i]);
-            float f2v = prefs.getFloat("volumeF2te_"+f2[i], vol2[i]);
+            float f1v = prefs.getFloat("volumeF1te_"+i, vol1[i]);
+            float f2v = prefs.getFloat("volumeF2te_"+i, vol2[i]);
             vol3Lookup.put(f1[i],f1v);
             vol3Lookup.put(f2[i],f2v);
         }

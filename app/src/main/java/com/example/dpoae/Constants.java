@@ -229,10 +229,10 @@ public class Constants {
         }
         else {
             phone="unknownPhone";
-            f2[0]=1900;
-            f2[1]=2900;
-            f2[2]=3900;
-            f2[3]=4900;
+            f2[0]=2016;
+            f2[1]=2953;
+            f2[2]=3985;
+            f2[3]=4969;
         }
 
         freqs=new boolean[f2.length];
@@ -241,11 +241,6 @@ public class Constants {
             freqs[i]=true;
             f2[i] = prefs.getInt("f2Value_" + i, f2[i]);
         }
-
-//        f2[0]=2016;
-//        f2[1]=2953;
-//        f2[2]=3985;
-//        f2[3]=4969;
 
         for (int i = 0; i < f1.length; i++) {
             f1[i]=(int)(f2[i]/1.22);

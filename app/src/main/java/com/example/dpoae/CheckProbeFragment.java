@@ -16,11 +16,13 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -114,131 +116,147 @@ public class CheckProbeFragment extends Fragment {
             }
         });
 
-        f2ValueTxt.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) return;
-
-            // Text lost focus. Presumably a new value is entered.
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-            String ss = f2ValueTxt.getText().toString();
-            if (ss.length() > 0) {
-                int vv = Integer.parseInt(ss);
-
-                // let's update f1 from f2
-                int f1 = (int) (vv/1.22);
-                int oae = (int) Math.round(2*f1-vv);
-                int oae2 = 2*vv-f1;
-
-                // Get old frequencies
-                int prevF2 = Constants.octaves.get(freqIndex);
-                int prevF1 = Constants.f1[freqIndex];
-
-                // let's set f2 to the entered value
-                Constants.octaves.set(freqIndex, vv);
-                Constants.f2[freqIndex]=vv;
-
-                // Update related frequencies
-                Constants.freqLookup.put(vv,f1);
-                Constants.oaeLookup.put(vv,oae);
-                Constants.oaeLookup2.put(vv,oae2);
-                Constants.f1[freqIndex]=f1;
-
-                // Update related volume.
-                Constants.vol1Lookup.put(vv, Constants.vol1Lookup.get(prevF2));
-                Constants.vol1Lookup.put(f1, Constants.vol1Lookup.get(prevF1));
-                Constants.vol3Lookup.put(vv, Constants.vol3Lookup.get(prevF2));
-                Constants.vol3Lookup.put(f1, Constants.vol3Lookup.get(prevF1));
-
-                // let's persist the new f2 for the frequency index
-                editor.putInt("f2Value_" + freqIndex,vv);
-                editor.commit();
-
-                /*
-                int[] tempF2s = new int[Constants.octaves.size()];
-                int j = 0;
-                for (int i : Constants.octaves) {
-                    tempF2s[j] = i;
-                    j++;
+        f2ValueTxt.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId != EditorInfo.IME_ACTION_DONE) {
+                    return false;
                 }
 
-                tempF2s[freqIndex] = vv;
-                Constants.octaves.clear();
-                for (int i : tempF2s) {
-                    Constants.octaves.add(i);
+                Integer vv = tryParseInt(v.getText().toString());
+                if (vv == null)
+                {
+                    v.setText(Constants.f2[freqIndex]+"");
                 }
-                */
+                else
+                {
+                    // let's update f1 from f2
+                    int f1 = (int) (vv / 1.22);
+                    int oae = (int) Math.round(2 * f1 - vv);
+                    int oae2 = 2 * vv - f1;
 
-                // Refresh the running params
-                if(isDrawing) RunNow();
+                    // Get old frequencies
+                    int prevF2 = Constants.octaves.get(freqIndex);
+                    int prevF1 = Constants.f1[freqIndex];
+
+                    // let's set f2 to the entered value
+                    Constants.octaves.set(freqIndex, vv);
+                    Constants.f2[freqIndex] = vv;
+
+                    // Update related frequencies
+                    Constants.freqLookup.put(vv, f1);
+                    Constants.oaeLookup.put(vv, oae);
+                    Constants.oaeLookup2.put(vv, oae2);
+                    Constants.f1[freqIndex] = f1;
+
+                    // Update related volume.
+                    Constants.vol1Lookup.put(vv, Constants.vol1Lookup.get(prevF2));
+                    Constants.vol1Lookup.put(f1, Constants.vol1Lookup.get(prevF1));
+                    Constants.vol3Lookup.put(vv, Constants.vol3Lookup.get(prevF2));
+                    Constants.vol3Lookup.put(f1, Constants.vol3Lookup.get(prevF1));
+
+                    // let's persist the new f2 for the frequency index
+                    // Save the new value in preferences
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                    editor.putInt("f2Value_" + freqIndex, vv);
+                    editor.commit();
+
+                    if (isDrawing) RunNow();
+                }
+
+                return true;
             }
         });
 
-        volumeValueTxt.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) return;
+        volumeValueTxt.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId != EditorInfo.IME_ACTION_DONE) {
+                    return false;
+                }
 
-            // Text lost focus. Presumably a new value is entered.
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-            String ss = volumeValueTxt.getText().toString();
-            if (ss.length() > 0) {
-                Float vv = Float.parseFloat(ss);
                 int f2 = Constants.octaves.get(freqIndex);
+                Float vv = tryParseFloat(v.getText().toString());
+                if (vv == null)
+                {
+                    v.setText(Constants.vol1Lookup.get(f2)+"");
+                }
+                else
+                {
+                    // Save the new value in preferences
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                    editor.putFloat("volumeValue_" + freqIndex, vv);
+                    editor.commit();
 
-                editor.putFloat("volumeValue_" + freqIndex,vv);
-                editor.commit();
+                    Constants.vol1Lookup.put(f2, vv);
 
-                // Update the in memory volume that is shared.
-                // Note that this value is not commited yet. It will change when app restarts.
-                // This can be saved using SharedPreferences. We need to generate the key with frequency
-                Constants.vol1Lookup.put(f2, vv);
+                    // Refresh the running params
+                    if (isDrawing) RunNow();
+                }
 
-                // Refresh the running params
-                if(isDrawing) RunNow();
+                return true;
             }
         });
 
-        volumeF2te.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) return;
+        volumeF2te.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId != EditorInfo.IME_ACTION_DONE) {
+                    return false;
+                }
 
-            // Text lost focus. Presumably a new value is entered.
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-            String ss = volumeF2te.getText().toString();
-            if (ss.length() > 0) {
-                Float volumeValue = Float.parseFloat(ss);
+                Float volumeValue = tryParseFloat(v.getText().toString());
                 int f2 = Constants.octaves.get(freqIndex);
+                if (volumeValue == null)
+                {
+                    v.setText(Constants.vol3Lookup.get(f2)+"");
+                }
+                else
+                {
+                    // Save the new value in preferences
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                    editor.putFloat("volumeF2te_" + freqIndex, volumeValue);
+                    editor.commit();
 
-                editor.putFloat("volumeF2te_" + freqIndex, volumeValue);
-                editor.commit();
+                    Constants.vol3Lookup.put(f2, volumeValue);
 
-                // Update the in memory volume that is shared.
-                // Note that this value is not commited yet. It will change when app restarts.
-                // This can be saved using SharedPreferences. We need to generate the key with frequency
-                Constants.vol3Lookup.put(f2, volumeValue);
+                    // Refresh the running params
+                    if (isDrawing) RunNow();
+                }
 
-                // Refresh the running params
-                if(isDrawing) RunNow();
+                return true;
             }
         });
 
-        volumeF1te.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) return;
-
-            // Text lost focus. Presumably a new value is entered.
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-            String ss = volumeF1te.getText().toString();
-            if (ss.length() > 0) {
-                Float volumeValue = Float.parseFloat(ss);
+        volumeF1te.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId != EditorInfo.IME_ACTION_DONE) {
+                    return false;
+                }
+                Float volumeValue = tryParseFloat(v.getText().toString());
                 int f2 = Constants.octaves.get(freqIndex);
                 int f1 = Constants.freqLookup.get(f2);
+                if (volumeValue == null) {
+                    v.setText(Constants.vol3Lookup.get(f1) + "");
+                } else {
+                    // Save the new value in preferences
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                    editor.putFloat("volumeF1te_" + freqIndex, volumeValue);
+                    editor.commit();
 
-                editor.putFloat("volumeF1te_" + freqIndex, volumeValue);
-                editor.commit();
+                    // Update the in memory volume that is shared.
+                    Constants.vol3Lookup.put(f1, volumeValue);
 
-                // Update the in memory volume that is shared.
-                // Note that this value is not commited yet. It will change when app restarts.
-                // This can be saved using SharedPreferences. We need to generate the key with frequency
-                Constants.vol3Lookup.put(f1, volumeValue);
+                    // Refresh the running params
+                    if (isDrawing) RunNow();
+                }
 
-                // Refresh the running params
-                if(isDrawing) RunNow();
+                return true;
             }
         });
 
@@ -488,7 +506,7 @@ public class CheckProbeFragment extends Fragment {
         text.setColor(Color.WHITE);
         text.setTextSize(80);
         canvas.drawText(
-                String.format("%f", max),
+                String.format("%.2f", max),
                 10,
                 100,
                 text);
@@ -497,7 +515,7 @@ public class CheckProbeFragment extends Fragment {
         text.setTextSize(50);
         canvas.drawText(
                 String.format(
-                        "%d-%.1f, %d-%.1f, %d-%.1f", //, %f, %f, %f",
+                        "%d:%.1f, %d:%.1f, %d:%.1f", //, %f, %f, %f",
                         fOae,
                         snr,
                         f2,
@@ -555,6 +573,22 @@ public class CheckProbeFragment extends Fragment {
         Constants.CheckProbeFragment = this;
         this.isRunning=true;
         this.isDrawing=false;
+    }
+
+    private static Integer tryParseInt(String input) {
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private static Float tryParseFloat(String input) {
+        try {
+            return Float.parseFloat(input);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private class Listener extends Thread {
@@ -637,22 +671,6 @@ public class CheckProbeFragment extends Fragment {
             rec.release();
         }
     }
-
-    /*    private class DrawTask extends AsyncTask<Void, Void, Void> {
-        public CheckProbeFragment fragment;
-
-        public DrawTask(CheckProbeFragment fragment)
-        {
-            super();
-            this.fragment=fragment;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            return null;
-        }
-    }
- */
 
     private class FFT {
 

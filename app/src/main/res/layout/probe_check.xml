@@ -31,6 +31,7 @@ android:scrollbars="none" >
         android:layout_height="60dp"
         android:imeOptions="actionDone"
         android:inputType="numberDecimal"
+        android:hint="f2"
     />
 
     <EditText
@@ -39,6 +40,7 @@ android:scrollbars="none" >
         android:layout_height="60dp"
         android:imeOptions="actionDone"
         android:inputType="numberDecimal"
+        android:hint="Overall volume"
     />
 
     <EditText
@@ -47,6 +49,7 @@ android:scrollbars="none" >
         android:layout_height="60dp"
         android:imeOptions="actionDone"
         android:inputType="numberDecimal"
+        android:hint="F1 volume"
     />
 
     <EditText
@@ -55,6 +58,7 @@ android:scrollbars="none" >
         android:layout_height="60dp"
         android:imeOptions="actionDone"
         android:inputType="numberDecimal"
+        android:hint="F2 volume"
     />
 
 </LinearLayout>

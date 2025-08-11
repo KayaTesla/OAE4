@@ -46,7 +46,7 @@ public class CheckProbeFragment extends Fragment {
     View view;
     int phaseIndex;
     boolean isDrawing;
-    private RadioButton b2, b3, b4;
+    private RadioButton b1, b2, b3;
     int freqIndex;
     AudioStreamer sp;
     private Listener listener;
@@ -100,9 +100,9 @@ public class CheckProbeFragment extends Fragment {
         final Button buttonDraw = view.findViewById(R.id.buttonDraw);
         this.isRunning=true;
         this.isDrawing=false;
-        b2 = (RadioButton)view.findViewById(R.id.khz2);
-        b3 = (RadioButton)view.findViewById(R.id.khz3);
-        b4 = (RadioButton)view.findViewById(R.id.khz4);
+        b1 = (RadioButton)view.findViewById(R.id.khz3);
+        b2 = (RadioButton)view.findViewById(R.id.khz4);
+        b3 = (RadioButton)view.findViewById(R.id.khz5);
 
         // Find the RadioGroup in the layout. Add a listener to update frequency.
         RadioGroup radioGroup = view.findViewById(R.id.idRadioGroup);
@@ -320,11 +320,11 @@ public class CheckProbeFragment extends Fragment {
     private void UpdateFreqIndex() {
         // get newFeqIndex from radio button
         int newFreqIndex = 0;
-        if (b3.isChecked()) {
+        if (b2.isChecked()) {
             newFreqIndex = 2;
-        } else if (b4.isChecked()) {
+        } else if (b3.isChecked()) {
             newFreqIndex = 3;
-        } else if (b2.isChecked()) {
+        } else if (b1.isChecked()) {
             newFreqIndex = 1;
         } else {
             newFreqIndex = 0;

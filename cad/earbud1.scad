@@ -1,6 +1,6 @@
 //use $fn=1000 for manufacturing. 
 // rendering with 1K facet number is taking 8 minutes
-$fn=300; 
+$fn=20; 
 
 sd=13/2 + 1;  // top of main housing:.7.5mm radius => 1 mm length end to end
 ld=29/2 + 1;  // base of main housing: 15.5 mm radius => 31mm length end to end

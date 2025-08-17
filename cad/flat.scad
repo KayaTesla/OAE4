@@ -1,6 +1,6 @@
 ////use $fn=1000 for manufacturing. 
 // rendering with 1K facet number is taking 8 minutes
-$fn=120; 
+$fn=20; 
 
 // mic dimentions
     hHousing=2.6;
@@ -28,10 +28,10 @@ difference()
 {
 union()
 {
-//drawWithCut(50.,10,0,0);
+drawWithCut(30, 30, 30, 0, cube=false);
 //drawWithCut(-20,50.25,0,0);
 
-drawAll();
+//drawAll();
 //scale([0.97,0.93,1])bottom();
 }
 translate([0,0,-246])
@@ -118,8 +118,8 @@ module tipHoles()
 
 module tipWall()
 {
-    //translate([0,0,ht/2+hHousing+hBottomBox+hMicSpace])
-    //cube([(r2t+rTipHole),0.5,ht+0.6],center=true);
+    translate([0,0,ht/2+hHousing+hBottomBox+hMicSpace])
+    cube([(r2t+rTipHole),0.5,ht+0.6],center=true);
 }
 
 module mic()
@@ -272,17 +272,25 @@ module tip()
     cylinder(h=7,r1=r1t,r2=r2t);
 }
 
-module drawWithCut(x=0,y=0,z=0,t=0)
+module drawWithCut(x=0,y=0,z=0,t=0,cube=false)
 {
     difference()
     {
         drawAll();
-        translate([x, y,z])
-        translate([-50,-50,0])
-        rotate([0,0,t])
-        translate([0, 0,0])
-          cube([100, 50, 50]);
-    }
+        drawCubeToSubstract(x,y,z);
+   }
+   if (cube)
+   {    
+       drawCubeToSubstract(x,y,z);
+   }
+}
+
+module drawCubeToSubstract(x=0,y=0,z=0)
+{
+    translate([x, y,z])
+    translate([-50,-50,0])
+    translate([0, 0,0])
+    cube([100, 50, 50]);
 }
 
 module testChamber()
